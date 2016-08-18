@@ -23,9 +23,15 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <fstream>
 
 using namespace llvm;
 using namespace llvm::sys;
+
+std::ifstream source_in("source.kl");//Source file
+std::istreambuf_iterator<char> source_fd(source_in);
+#define getchar_file() *(source_fd++)
+
 
 //===----------------------------------------------------------------------===//
 // Lexer
@@ -68,11 +74,11 @@ static int gettok() {
 
   // Skip any whitespace.
   while (isspace(LastChar))
-    LastChar = getchar();
+    LastChar = getchar_file();
 
   if (isalpha(LastChar)) { // identifier: [a-zA-Z][a-zA-Z0-9]*
     IdentifierStr = LastChar;
-    while (isalnum((LastChar = getchar())))
+    while (isalnum((LastChar = getchar_file())))
       IdentifierStr += LastChar;
 
     if (IdentifierStr == "def")
@@ -102,7 +108,7 @@ static int gettok() {
     std::string NumStr;
     do {
       NumStr += LastChar;
-      LastChar = getchar();
+      LastChar = getchar_file();
     } while (isdigit(LastChar) || LastChar == '.');
 
     NumVal = strtod(NumStr.c_str(), nullptr);
@@ -112,7 +118,7 @@ static int gettok() {
   if (LastChar == '#') {
     // Comment until end of line.
     do
-      LastChar = getchar();
+      LastChar = getchar_file();
     while (LastChar != EOF && LastChar != '\n' && LastChar != '\r');
 
     if (LastChar != EOF)
@@ -125,7 +131,7 @@ static int gettok() {
 
   // Otherwise, just return the character as its ascii value.
   int ThisChar = LastChar;
-  LastChar = getchar();
+  LastChar = getchar_file();
   return ThisChar;
 }
 
@@ -1175,7 +1181,6 @@ int main() {
   BinopPrecedence['*'] = 40; // highest.
 
   // Prime the first token.
-  fprintf(stderr, "ready> ");
   getNextToken();
 
   InitializeModuleAndPassManager();
