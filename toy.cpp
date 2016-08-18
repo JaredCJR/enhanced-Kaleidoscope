@@ -78,7 +78,7 @@ static int gettok() {
 
   if (isalpha(LastChar)) { // identifier: [a-zA-Z][a-zA-Z0-9]*
     IdentifierStr = LastChar;
-    while (isalnum((LastChar = getchar_file())))
+    while (isalnum((LastChar = getchar_file())) || (LastChar == '_') )
       IdentifierStr += LastChar;
 
     if (IdentifierStr == "def")

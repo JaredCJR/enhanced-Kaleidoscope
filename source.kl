@@ -1,0 +1,12 @@
+def average(x y) (x + y) * 0.5;
+
+
+def test_Kal() 0.5;
+
+
+def fib(A)
+  if A < 3 then
+    1
+  else
+    fib(A-1)+fib(A-2);
+
